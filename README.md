@@ -1,0 +1,1 @@
+STVP_CmdLine -Device=STM8S003F3 -no_log -no_loop -FileProg=C:\Users\HoangAnh\Documents\nrf24l01_stm8_button\main.hex
