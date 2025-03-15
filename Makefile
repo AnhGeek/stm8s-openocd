@@ -7,6 +7,8 @@ MCU = -mstm8
 CFLAGS = --out-fmt-elf --all-callee-saves --verbose --stack-auto --fverbose-asm  --float-reent --no-peep --debug
 # Output directory
 OUT_DIR = _out
+# Output directory for preprocessed files
+PREPROCESS_DIR = _pre
 
 # ELF output (inside _out/)
 # Output files
@@ -20,7 +22,16 @@ SRCS := $(wildcard *.c)
 OBJS := $(SRCS:%.c=$(OUT_DIR)/%.rel)
 
 # Default rule: Build everything
-all: $(HEX_OUTPUT) $(ELF_OUTPUT)
+all: $(HEX_OUTPUT) $(ELF_OUTPUT) preprocess
+preprocess: $(SRCS:%.c=$(PREPROCESS_DIR)/%.i)
+
+# Ensure preprocessed output directory exists
+$(PREPROCESS_DIR):
+	mkdir -p $(PREPROCESS_DIR)
+
+# Generate preprocessed files (.i)
+$(PREPROCESS_DIR)/%.i: %.c | $(PREPROCESS_DIR)
+	$(CC) $(MCU) $(CFLAGS) -E $< -o $@
 
 # Ensure _out directory exists
 $(OUT_DIR):
@@ -41,4 +52,4 @@ $(ELF_OUTPUT): $(OBJS)
 
 # Clean up compiled files
 clean:
-	rm -rf $(OUT_DIR)
+	rm -rf $(OUT_DIR) $(PREPROCESS_DIR)

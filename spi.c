@@ -14,6 +14,11 @@ void SPI_init() {
     PC_CR1 |= (1 << CS_PIN);
     PC_ODR |= (1 << CS_PIN);
 
+    // CE pin, default is low
+    PC_DDR |= (1 << CE_PIN);
+    PC_CR1 |= (1 << CE_PIN);
+    PC_ODR |= (1 << CE_PIN);
+
     /* Initialize SPI master at 500kHz  */
     SPI_CR2 = (1 << SSM) | (1 << SSI);
     SPI_CR1 = (1 << MSTR) | (1 << SPE) | (1 << BR0);
