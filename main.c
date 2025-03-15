@@ -11,7 +11,7 @@
 static inline void delay_ms(uint16_t ms) {
     uint32_t i;
     for (i = 0; i < ((F_CPU / 18000UL) * ms); i++)
-        __asm__("nop");
+        __asm__("nop"); 
 }
 
 void main() {

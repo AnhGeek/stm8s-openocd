@@ -1,39 +1,44 @@
-# Compiler
+# Compiler and Linker
 CC = sdcc
-
-# Linker (SDCC uses 'sdld' internally, but we specify ELF output)
 LD = sdcc
 
-# Target MCU (Modify this for your specific MCU)
+# Target MCU (Modify for your specific MCU)
 MCU = -mstm8
+CFLAGS = --out-fmt-elf --all-callee-saves --verbose --stack-auto --fverbose-asm  --float-reent --no-peep --debug
+# Output directory
+OUT_DIR = _out
 
-# Output file
-OUTPUT = output.elf
-
-# Object file directory
-OBJ_DIR = _out
+# ELF output (inside _out/)
+# Output files
+ELF_OUTPUT = $(OUT_DIR)/output.elf
+HEX_OUTPUT = $(OUT_DIR)/output.hex
 
 # Find all C source files
 SRCS := $(wildcard *.c)
 
 # Generate object file paths in _out directory
-OBJS := $(SRCS:%.c=$(OBJ_DIR)/%.rel)
+OBJS := $(SRCS:%.c=$(OUT_DIR)/%.rel)
 
-# Default rule: Build the project
-all: $(OUTPUT)
+# Default rule: Build everything
+all: $(HEX_OUTPUT) $(ELF_OUTPUT)
 
 # Ensure _out directory exists
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+$(OUT_DIR):
+	mkdir -p $(OUT_DIR)
 
 # Compile each .c file into .rel, placing output in _out/
-$(OBJ_DIR)/%.rel: %.c | $(OBJ_DIR)
-	$(CC) $(MCU) -c $< -o $@
+$(OUT_DIR)/%.rel: %.c | $(OUT_DIR)
+	$(CC) $(MCU) -c $< $(CFLAGS) -o $@
 
-# Link all object files into an ELF file inside _out/
-$(OUTPUT): $(OBJS)
-	$(LD) $(MCU) $(OBJS) -o $(OUTPUT)
+# Link all object files into IHX format (Intel HEX)
+$(HEX_OUTPUT): $(OBJS)
+	$(LD) $(MCU) $(CFLAGS) $(OBJS) -o $(OUT_DIR)/output.ihx
+	mv $(OUT_DIR)/output.ihx $(HEX_OUTPUT)
+
+# Convert HEX to ELF using objcopy
+$(ELF_OUTPUT): $(OBJS)
+	cd $(OUT_DIR) && $(LD) $(MCU) $(notdir $(OBJS)) --out-fmt-elf -o output.elf
 
 # Clean up compiled files
 clean:
-	rm -rf $(OBJ_DIR) $(OUTPUT)
+	rm -rf $(OUT_DIR)
