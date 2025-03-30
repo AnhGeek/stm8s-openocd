@@ -1,9 +1,10 @@
-#ifndef register_h
-#define register_h
+#ifndef __REGISTER_H__
+#define __REGISTER_H__
 
 #define F_CPU 2000000UL
 
 #define _SFR_(mem_addr)     (*(volatile uint8_t *)(0x5000 + (mem_addr)))
+#define __STATIC_INLINE
 
 /* PORT B */
 #define PB_ODR      _SFR_(0x05)
