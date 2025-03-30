@@ -1,5 +1,11 @@
 #include "spi.h"
 
+#define INPUT                   0
+#define FLOAT                   0
+#define PULL_UP                 (1 << 1)
+#define NO_INT                  0
+#define INT                     (1 << 0)
+
 // macro to configure a pin
 #define PIN_MODE(PORT, PIN, MODE)                     \
 P##PORT##_DDR_DDR##PIN = (MODE) >> 2;       \
