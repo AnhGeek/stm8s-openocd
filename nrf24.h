@@ -14,6 +14,7 @@
 #define NRF24_RF_CH_REG         0x05
 #define NRF24_RF_SETUP_REG      0x06
 #define NRF24_STATUS_REG        0x07
+#define NRF24_OBSERVE_TX        0x08
 #define NRF24_RX_ADDR_P0_REG    0x0A
 #define NRF24_TX_ADDR_REG       0x10
 #define NRF24_RX_PW_P0          0x11

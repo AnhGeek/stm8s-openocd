@@ -129,7 +129,7 @@ uint8_t nrf_detect(void)
 
 uint8_t __STATIC_INLINE nrf_init(uint8_t channel) {
     nrf_write_register(NRF24_SETUP_RETR, 0x5F);  // CONFIG: ARD=5, ARC=15
-    nrf_write_register(NRF24_RF_SETUP_REG, 0x06); //'00' – 1Mbps, '11' – 0dBm, '0'
+    nrf_write_register(NRF24_RF_SETUP_REG, 0x07); //'00' – 1Mbps, '11' – 0dBm, '0'
     nrf_write_register(NRF24_DYNPD_REG, 0x00); // disable dynamic payloads by default (for all pipes)
     nrf_write_register(NRF24_EN_AA_REG, 0x3F);  // enable auto-ack on all pipes
     nrf_write_register(NRF24_EN_EN_RXADDR, 3); // only open RX pipes 0 & 1
@@ -159,6 +159,9 @@ uint8_t __STATIC_INLINE nrf_openWritingPipe(const uint8_t* address)
 void nrf_sendpayload(uint8_t *data, uint8_t len) {
     uint16_t ms = 1;
     uint16_t nrf_status;
+    //flush_tx
+    nrf_write_cmd(NRF24_FLUSH_TX); 
+    nrf_write_register(NRF24_STATUS_REG, NRF24_CONFIG_RX_DR | NRF24_CONFIG_TX_DS | NRF24_CONFIG_MAX_RT);
     CSN_LOW();
     SPI_write(NRF24_W_TX_PAYLOAD);
     for (uint8_t i = 0; i < len; i++) {
@@ -169,15 +172,10 @@ void nrf_sendpayload(uint8_t *data, uint8_t len) {
     // Start transmission
     CE_HIGH();
     while (ms--) {
-        for (uint16_t i = 0; i < 1600; i++) __asm__("nop");
+        for (uint16_t i = 0; i < 50; i++) __asm__("nop");
     }
     CE_LOW();
     
-    nrf_status = nrf_read_register(NRF24_STATUS_REG);
-    if(nrf_status & NRF24_CONFIG_MAX_RT)
-    {
-        //flush_tx
-        nrf_read_register(NRF24_FLUSH_TX); 
-    }
     nrf_write_register(NRF24_STATUS_REG, NRF24_CONFIG_RX_DR | NRF24_CONFIG_TX_DS | NRF24_CONFIG_MAX_RT);
+    nrf_read_register(NRF24_STATUS_REG);
 }
