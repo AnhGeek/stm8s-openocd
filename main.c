@@ -6,9 +6,9 @@
 #define F_CPU 2000000UL
 
 #define _SFR_(mem_addr)     (*(volatile uint8_t *)(0x5000 + (mem_addr)))
-#define RF_CHANNEL              99
+#define RF_CHANNEL              10
 
-
+#define BUTTON_PIN  2
 #define LED_PIN     5
 
 static inline void delay_ms(uint16_t ms) {
@@ -24,7 +24,9 @@ void main() {
     uint8_t counter = 0;
     SPI_init();
 
-    
+    PA_DDR &= ~(1 << BUTTON_PIN); // configure PA2 as input
+    PA_CR1 |= (1 << BUTTON_PIN); //  Input with pull-up mode
+
     PB_DDR |= (1 << LED_PIN); // configure PD4 as output
     PB_CR1 |= (1 << LED_PIN); // push-pull mode
 
@@ -36,7 +38,7 @@ void main() {
     }
 
     // Init, open channel 10
-    nrf_init(10);
+    nrf_init(RF_CHANNEL);
 
     // Open pipe, with maximum length address 5
     nrf_openWritingPipe(pipe);
@@ -45,7 +47,12 @@ void main() {
         /* toggle pin every 250ms */
         //PB_ODR ^= (1 << LED_PIN);
         PIN_TOGGLE(B, LED_PIN);
-        nrf_sendpayload(tx_data, 32);
+        if (!(PA_IDR && (1 << BUTTON_PIN)))
+        {
+            delay_ms(5);
+            if (!(PA_IDR && (1 << BUTTON_PIN))) nrf_sendpayload(tx_data, 32);
+        }
+        
         delay_ms(1000);
     }
 }

@@ -6,6 +6,12 @@
 #define _SFR_(mem_addr)     (*(volatile uint8_t *)(0x5000 + (mem_addr)))
 #define __STATIC_INLINE
 
+/* PORT A */
+#define PA_ODR      _SFR_(0x00)
+#define PA_IDR      _SFR_(0x01)
+#define PA_DDR      _SFR_(0x02)
+#define PA_CR1      _SFR_(0x03)
+
 /* PORT B */
 #define PB_ODR      _SFR_(0x05)
 #define PB_DDR      _SFR_(0x07)
