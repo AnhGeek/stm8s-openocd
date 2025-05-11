@@ -19,9 +19,10 @@ static inline void delay_ms(uint16_t ms) {
 
 void main() {
     uint8_t nrf_status = NRF24L01_NOT_DETECTED;
-    uint8_t tx_data[] = "HELLOHELLOHELLOHELLOHELLOHELLOO";  // Example payload
+    uint8_t state[1] = {0};
+    uint8_t tx_data[] = "BT0XBT1XBT2XBT3XIN0XIN1XIN2XYYY";  // Payload template
     const uint8_t pipe[] = {0xE7, 0xE7, 0xE7, 0xE7, 0xE7};
-    uint8_t counter = 0;
+    uint16_t counter[1] = {0};
     SPI_init();
 
     PA_DDR &= ~(1 << BUTTON_PIN); // configure PA2 as input
@@ -32,7 +33,6 @@ void main() {
 
     while (nrf_status == NRF24L01_NOT_DETECTED) 
     {   
-        counter += 1;
         nrf_status = nrf_detect();
         delay_ms(1000);
     }
@@ -44,15 +44,42 @@ void main() {
     nrf_openWritingPipe(pipe);
 
     while (1) {
-        /* toggle pin every 250ms */
-        //PB_ODR ^= (1 << LED_PIN);
-        PIN_TOGGLE(B, LED_PIN);
-        if (!(PA_IDR && (1 << BUTTON_PIN)))
+        if (!(PA_IDR & (1 << BUTTON_PIN))) 
         {
-            delay_ms(5);
-            if (!(PA_IDR && (1 << BUTTON_PIN))) nrf_sendpayload(tx_data, 32);
+            delay_ms(50);
+            counter[0] += 1;
+            if (!(PA_IDR & (1 << BUTTON_PIN))) 
+            {
+                tx_data[3] = '0';
+                nrf_sendpayload(tx_data, 32);
+                PB_ODR &= ~(1 << LED_PIN);
+            }
+            while (!(PA_IDR & (1 << BUTTON_PIN))) {delay_ms(50);}
+        } else {
+            tx_data[3] = '1';
         }
-        
-        delay_ms(1000);
+        counter[0] += 1;
+        for(uint8_t i = 0;i < sizeof(counter); i++)
+        {
+            switch (state[i])
+            {
+            case 0:
+                /* code */
+                if (counter[i] >= 1000)
+                {
+                    state[i] = 1; // to state debouncing
+                }
+                break;
+            case 1:
+                PIN_TOGGLE(B, LED_PIN);
+                nrf_sendpayload(tx_data, 32);
+                counter[i] = 0;
+                state[i] = 0;
+                break;
+            default:
+                break;
+            }
+        }
+        delay_ms(1);
     }
 }
