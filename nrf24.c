@@ -129,7 +129,7 @@ uint8_t nrf_detect(void)
 
 uint8_t __STATIC_INLINE nrf_init(uint8_t channel) {
     nrf_write_register(NRF24_SETUP_RETR, 0x5F);  // CONFIG: ARD=5, ARC=15
-    nrf_write_register(NRF24_RF_SETUP_REG, 0x07); //'00' – 1Mbps, '11' – 0dBm, '0'
+    nrf_write_register(NRF24_RF_SETUP_REG, 0x27); //'00' – 250kbps, '11' – 0dBm, '0'
     nrf_write_register(NRF24_DYNPD_REG, 0x00); // disable dynamic payloads by default (for all pipes)
     nrf_write_register(NRF24_EN_AA_REG, 0x3F);  // enable auto-ack on all pipes
     nrf_write_register(NRF24_EN_EN_RXADDR, 3); // only open RX pipes 0 & 1
