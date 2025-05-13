@@ -14,5 +14,7 @@ start
 Note: after type "start" then enter, you will see symbols are loaded.
 
 
-To flash, go to openocd's script folder, then run:
-sudo openocd -f interface/stlink-dap.cfg -f target/stm8s003.cfg -c "init" -c "program_device /home/hoanganh/stm8_gdb/stm8s-openocd/_out/output.hex 0"
+To flash, go to openocd's script folder
+ cd /usr/local/share/openocd/scripts
+then run:
+ sudo openocd -f interface/stlink-dap.cfg -f target/stm8s003.cfg -c "init" -c "program_device /home/hoanganh/stm8_gdb/stm8s-openocd/_out/output.hex 0"
