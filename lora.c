@@ -71,78 +71,21 @@ uint8_t __STATIC_INLINE lora_read_addr(uint8_t regNo, uint8_t len)
 
 uint8_t lora_detect(void) 
 {  
-    lora_write_cmd(lora24_FLUSH_TX);
-    uint8_t fifo_status;
-    uint8_t returnCode = lora_DETECTED;
-    fifo_status = lora_read_register(lora24_FIFO_STATUS_REG);
-    if ((fifo_status & lora24_FIFO_STATUS_TX_EMPTY) != lora24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = lora_NOT_DETECTED;
+    uint8_t RegOpMode;
+    uint8_t returnCode = LORA_NOT_DETECTED;
+
+    lora_reset();
+    RegOpMode = lora_read_register(REG_OP_MODE);
+    if (RegOpMode == 0x09) {
+        returnCode = LORA_DETECTED;
     }
-    if ((fifo_status & lora24_FIFO_STATUS_TX_FULL) == lora24_FIFO_STATUS_TX_FULL) {
-        returnCode = lora_NOT_DETECTED;
-    }
-  
-    // send dummy 1-byte payload to the 1st FIFO buffer
-    CSN_LOW();
-    SPI_write(lora24_W_TX_PAYLOAD);
-    SPI_write(0);
-    CSN_HIGH();
-    
-    fifo_status = lora_read_register(lora24_FIFO_STATUS_REG);
-    if ((fifo_status & lora24_FIFO_STATUS_TX_EMPTY) == lora24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = lora_NOT_DETECTED;
-    }
-  
-    if ((fifo_status & lora24_FIFO_STATUS_TX_FULL) == lora24_FIFO_STATUS_TX_FULL) {
-        returnCode = lora_NOT_DETECTED;
-    }
-    
-    // send dummy 1-byte payload to the 2nd FIFO buffer
-    CSN_LOW();
-    SPI_write(lora24_W_TX_PAYLOAD);
-    SPI_write(0);
-    CSN_HIGH();
-    
-    fifo_status = lora_read_register(lora24_FIFO_STATUS_REG);
-    if ((fifo_status & lora24_FIFO_STATUS_TX_EMPTY) == lora24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = lora_NOT_DETECTED;
-    }
-  
-    if ((fifo_status & lora24_FIFO_STATUS_TX_FULL) == lora24_FIFO_STATUS_TX_FULL) {
-        returnCode = lora_NOT_DETECTED;
-    }
-  
-    // send dummy 1-byte payload to the 3rd FIFO buffer
-    CSN_LOW();
-    SPI_write(lora24_W_TX_PAYLOAD);
-    SPI_write(0);
-    CSN_HIGH();
-  
-    fifo_status = lora_read_register(lora24_FIFO_STATUS_REG);
-    if ((fifo_status & lora24_FIFO_STATUS_TX_EMPTY) == lora24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = lora_NOT_DETECTED;
-    }
-  
-    if ((fifo_status & lora24_FIFO_STATUS_TX_FULL) != lora24_FIFO_STATUS_TX_FULL) {
-        returnCode = lora_NOT_DETECTED;
-    }
-  
-    lora_write_cmd(lora24_FLUSH_TX);
-    
-    fifo_status = lora_read_register(lora24_FIFO_STATUS_REG);
-    if ((fifo_status & lora24_FIFO_STATUS_TX_EMPTY) != lora24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = lora_NOT_DETECTED;
-    }
-  
-    if ((fifo_status & lora24_FIFO_STATUS_TX_FULL) == lora24_FIFO_STATUS_TX_FULL) {
-        returnCode = lora_NOT_DETECTED;
-    }
-    
+        
     return returnCode;
 }  
 
 
 uint8_t __STATIC_INLINE lora_init(uint8_t channel) {
+    /*
     lora_write_register(lora24_SETUP_RETR, 0x5F);  // CONFIG: ARD=5, ARC=15
     lora_write_register(lora24_RF_SETUP_REG, 0x27); //'00' – 250kbps, '11' – 0dBm, '0'
     lora_write_register(lora24_DYNPD_REG, 0x00); // disable dynamic payloads by default (for all pipes)
@@ -159,7 +102,7 @@ uint8_t __STATIC_INLINE lora_init(uint8_t channel) {
     lora_write_register(lora24_STATUS_REG, lora24_CONFIG_RX_DR | lora24_CONFIG_TX_DS | lora24_CONFIG_MAX_RT);
 
     lora_write_register(lora24_CONFIG_REG, 0x0E);  // CONFIG: Enable CRC, TX mode
-    
+    */
     return 1;
 }
 

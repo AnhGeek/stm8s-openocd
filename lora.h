@@ -66,6 +66,9 @@
 #define LORA_R_REGISTER        0x7F
 #define LORA_NOP               0xFF     
 
+#define LORA_DETECTED       1
+#define LORA_NOT_DETECTED   0
+
 // Pin Mapping
 #define RST_HIGH()   ce_high()
 #define RST_LOW()    ce_low()
