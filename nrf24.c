@@ -56,17 +56,8 @@ uint8_t __STATIC_INLINE nrf_read_addr(uint8_t regNo, uint8_t len)
 
 uint8_t nrf_detect(void) 
 {  
-    nrf_write_cmd(NRF24_FLUSH_TX);
     uint8_t fifo_status;
-    uint8_t returnCode = NRF24L01_DETECTED;
-    fifo_status = nrf_read_register(NRF24_FIFO_STATUS_REG);
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_EMPTY) != NRF24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_FULL) == NRF24_FIFO_STATUS_TX_FULL) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-  
+    
     // send dummy 1-byte payload to the 1st FIFO buffer
     CSN_LOW();
     SPI_write(NRF24_W_TX_PAYLOAD);
@@ -75,55 +66,16 @@ uint8_t nrf_detect(void)
     
     fifo_status = nrf_read_register(NRF24_FIFO_STATUS_REG);
     if ((fifo_status & NRF24_FIFO_STATUS_TX_EMPTY) == NRF24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = NRF24L01_NOT_DETECTED;
+        return NRF24L01_NOT_DETECTED;
     }
-  
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_FULL) == NRF24_FIFO_STATUS_TX_FULL) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-    
-    // send dummy 1-byte payload to the 2nd FIFO buffer
-    CSN_LOW();
-    SPI_write(NRF24_W_TX_PAYLOAD);
-    SPI_write(0);
-    CSN_HIGH();
-    
-    fifo_status = nrf_read_register(NRF24_FIFO_STATUS_REG);
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_EMPTY) == NRF24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-  
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_FULL) == NRF24_FIFO_STATUS_TX_FULL) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-  
-    // send dummy 1-byte payload to the 3rd FIFO buffer
-    CSN_LOW();
-    SPI_write(NRF24_W_TX_PAYLOAD);
-    SPI_write(0);
-    CSN_HIGH();
-  
-    fifo_status = nrf_read_register(NRF24_FIFO_STATUS_REG);
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_EMPTY) == NRF24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-  
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_FULL) != NRF24_FIFO_STATUS_TX_FULL) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-  
+
     nrf_write_cmd(NRF24_FLUSH_TX);
-    
     fifo_status = nrf_read_register(NRF24_FIFO_STATUS_REG);
     if ((fifo_status & NRF24_FIFO_STATUS_TX_EMPTY) != NRF24_FIFO_STATUS_TX_EMPTY) {
-        returnCode = NRF24L01_NOT_DETECTED;
+        return NRF24L01_NOT_DETECTED;
     }
-  
-    if ((fifo_status & NRF24_FIFO_STATUS_TX_FULL) == NRF24_FIFO_STATUS_TX_FULL) {
-        returnCode = NRF24L01_NOT_DETECTED;
-    }
-    
-    return returnCode;
+
+    return NRF24L01_DETECTED;
 }  
 
 
