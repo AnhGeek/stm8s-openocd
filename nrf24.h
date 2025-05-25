@@ -69,10 +69,10 @@
 
 extern uint8_t nrf_write_cmd(uint8_t cmd);
 extern uint8_t nrf_detect(void);
-uint8_t __STATIC_INLINE nrf_init(uint8_t channel);
+uint8_t nrf_init(uint8_t channel);
 void nrf_sendpayload(uint8_t *data, uint8_t len);
-uint8_t __STATIC_INLINE nrf_read_register(uint8_t regNo);
-void __STATIC_INLINE nrf_write_addr(uint8_t a, const uint8_t* data, uint8_t len);
-uint8_t __STATIC_INLINE nrf_read_addr(uint8_t regNo, uint8_t len);
-uint8_t __STATIC_INLINE nrf_openWritingPipe(const uint8_t* address);
+uint8_t nrf_read_register(uint8_t regNo);
+void nrf_write_addr(uint8_t a, const uint8_t* data, uint8_t len);
+uint8_t nrf_read_addr(uint8_t regNo, uint8_t len);
+uint8_t nrf_openWritingPipe(const uint8_t* address);
 #endif

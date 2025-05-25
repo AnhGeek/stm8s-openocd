@@ -2,6 +2,7 @@
 #include "register.h"
 #include "main.h"
 #include "nrf24.h"
+#include "lora.h"
 
 #define F_CPU 2000000UL
 
@@ -42,6 +43,7 @@ void main() {
 
     // Open pipe, with maximum length address 5
     nrf_openWritingPipe(pipe);
+    //lora_write_cmd(0x00);
 
     while (1) {
         if (!(PA_IDR & (1 << BUTTON_PIN))) 

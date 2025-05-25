@@ -4,7 +4,6 @@
 #define F_CPU 2000000UL
 
 #define _SFR_(mem_addr)     (*(volatile uint8_t *)(0x5000 + (mem_addr)))
-#define __STATIC_INLINE
 
 /* PORT A */
 #define PA_ODR      _SFR_(0x00)

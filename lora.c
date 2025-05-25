@@ -2,7 +2,7 @@
 #include "spi.h"
 #include "lora.h"
 
-# define __STATIC_INLINE
+
 
 void lora_reset(void)
 {

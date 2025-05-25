@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include "spi.h"
 
+# define __STATIC_INLINE static
+
 // registers
 #define REG_FIFO                 0x00
 #define REG_OP_MODE              0x01
