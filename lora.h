@@ -73,14 +73,18 @@
 #define RST_HIGH()   ce_high()
 #define RST_LOW()    ce_low()
 
-extern uint8_t lora_write_cmd(uint8_t cmd);
+
+
+__STATIC_INLINE void lora_write_addr(uint8_t a, const uint8_t* data, uint8_t len);
+__STATIC_INLINE uint8_t lora_read_addr(uint8_t regNo, uint8_t len);
+__STATIC_INLINE uint8_t lora_openWritingPipe(const uint8_t* address);
+__STATIC_INLINE uint8_t lora_write_register(uint8_t regNo, uint8_t regVal);
+__STATIC_INLINE uint8_t lora_read_register(uint8_t regNo);
+__STATIC_INLINE uint8_t lora_write_cmd(uint8_t cmd);
+
+extern uint8_t lora_init(uint8_t channel);
 extern uint8_t lora_detect(void);
 extern void lora_reset(void);
-uint8_t __STATIC_INLINE lora_init(uint8_t channel);
-void lora_sendpayload(uint8_t *data, uint8_t len);
-uint8_t __STATIC_INLINE lora_read_register(uint8_t regNo);
-void __STATIC_INLINE lora_write_addr(uint8_t a, const uint8_t* data, uint8_t len);
-uint8_t __STATIC_INLINE lora_read_addr(uint8_t regNo, uint8_t len);
-uint8_t __STATIC_INLINE lora_openWritingPipe(const uint8_t* address);
+extern uint8_t lora_sendpayload(uint8_t *data, uint8_t len);
 
 #endif
